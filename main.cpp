@@ -4,6 +4,8 @@ using namespace std;
 
 string option;
 string file;
+int headerSize;
+int fileSize;
 
 bool setByte(const string& filename, int addr, char val) {
     // Open the file in binary mode
@@ -13,7 +15,7 @@ bool setByte(const string& filename, int addr, char val) {
         cout << "Error opening file!" << endl;
         return false;
     }
-
+    fileSize = target.tellg();
     // Move to the desired position in the file
     target.seekp(addr);
 
@@ -28,6 +30,7 @@ bool setByte(const string& filename, int addr, char val) {
 }
 
 int main(){
+    srand(static_cast<unsigned>(time(nullptr))); // Seed the random number generator
     cout << "chose your option (read the README.md first)" << endl;
     cout << "1. Random corrupt" << endl;
     cout << "2. Random clone corrupt" << endl;
@@ -36,6 +39,11 @@ int main(){
 
     cout << "what is the path of your file?" << endl;
     cin >> file;
-    setByte(file,10,12);
+
+    if(option=="1"){
+        cout << "where the header of your file ends?" << endl;
+        cin >> headerSize;
+        setByte();
+    }
 }
 
