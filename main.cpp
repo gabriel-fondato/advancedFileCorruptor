@@ -11,6 +11,9 @@ string option;
 string file;
 int headerSize;
 int fileSize;
+string doUserWantToContinue;
+int randomAddr;
+fstream target;
 
 bool setByte(fstream &target, int addr, char val) {
     // Open the file in binary mode
@@ -30,17 +33,19 @@ bool setByte(fstream &target, int addr, char val) {
     target.close();
 
     cout << "Byte value set successfully!" << endl;
-    cout << fileSize << endl;
+    cout << addr << endl;
     return true;
 }
 
-bool randomCorrupt(){
-    fstream target(file, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
-    cout << "where the header of your file ends?" << endl;
-    cin >> headerSize;
-    cout << target.tellg() << endl;
-    int randomAddr = headerSize + ( std::rand() % ( target.tellg() - headerSize + 1 ) );
-    setByte(target,randomAddr,rand());
+bool randomCorrupt(bool doTheSameThingAgain){
+    target.open(file, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
+    if(!doTheSameThingAgain){
+        cout << "where the header of your file ends?" << endl;
+        cin >> headerSize;
+    }
+    randomAddr = headerSize + ( std::rand() % ( target.tellg() - headerSize + 1 ) );
+    if(setByte(target,randomAddr,rand()))
+        return true;
 }
 
 int main(){
@@ -55,7 +60,13 @@ int main(){
     cin >> file;
 
     if(option=="1"){
-        randomCorrupt();
-    }
+        randomCorrupt(false);
+        do {
+            cout << "want to do it again?" << endl;
+            cin >> doUserWantToContinue;
+            if(doUserWantToContinue=="yes") 
+                randomCorrupt(true);
+        } while (doUserWantToContinue=="yes");
+    }   
 }
 
