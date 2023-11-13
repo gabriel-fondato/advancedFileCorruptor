@@ -30,14 +30,15 @@ bool setByte(fstream &target, int addr, char val) {
     target.close();
 
     cout << "Byte value set successfully!" << endl;
+    cout << fileSize << endl;
     return true;
 }
 
 bool randomCorrupt(){
-    fstream target(file, std::ios::binary | std::ios::in | std::ios::out);
+    fstream target(file, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
     cout << "where the header of your file ends?" << endl;
     cin >> headerSize;
-   
+    cout << target.tellg() << endl;
     int randomAddr = headerSize + ( std::rand() % ( target.tellg() - headerSize + 1 ) );
     setByte(target,randomAddr,rand());
 }
