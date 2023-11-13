@@ -14,6 +14,7 @@ int fileSize;
 string doUserWantToContinue;
 int randomAddr;
 fstream target;
+fstream clone;
 
 bool setByte(fstream &target, int addr, char val) {
     // Open the file in binary mode
@@ -33,8 +34,12 @@ bool setByte(fstream &target, int addr, char val) {
     target.close();
 
     cout << "Byte value set successfully!" << endl;
-    cout << addr << endl;
+    cout << addr << endl; //print the corrupted addr
     return true;
+}
+
+int getRandomAddr(fstream &target, int headerSize){
+    randomAddr = headerSize + ( std::rand() % ( target.tellg() - headerSize + 1 ) ); // chose random number betteen headerSize and the size of the target
 }
 
 bool randomCorrupt(bool doTheSameThingAgain){
@@ -43,9 +48,17 @@ bool randomCorrupt(bool doTheSameThingAgain){
         cout << "where the header of your file ends?" << endl;
         cin >> headerSize;
     }
-    randomAddr = headerSize + ( std::rand() % ( target.tellg() - headerSize + 1 ) );
-    if(setByte(target,randomAddr,rand()))
+    
+    if(setByte(target,getRandomAddr(target,headerSize),rand()))
         return true;
+}
+
+bool randomCloneCorrupt(){
+    target.open(file, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
+    cout << "where the header of your file ends?" << endl;
+    cin >> headerSize;
+    randomAddr = getRandomAddr(target,headerSize)
+    cout << "how many files do you want to create a clone";
 }
 
 int main(){
@@ -67,6 +80,8 @@ int main(){
             if(doUserWantToContinue=="yes") 
                 randomCorrupt(true);
         } while (doUserWantToContinue=="yes");
+    }else if(option=="2"){
+        randomCloneCorrupt();
     }   
 }
 
