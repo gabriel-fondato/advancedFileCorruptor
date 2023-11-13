@@ -1,5 +1,10 @@
 #include <iostream>
 #include <fstream>
+#include <string.h>
+#include <stdlib.h>
+#include <cstdlib>
+#include <ctime>
+
 using namespace std;
 
 string option;
@@ -7,9 +12,8 @@ string file;
 int headerSize;
 int fileSize;
 
-bool setByte(const string& filename, int addr, char val) {
+bool setByte(fstream &target, int addr, char val) {
     // Open the file in binary mode
-    fstream target(filename, std::ios::binary | std::ios::in | std::ios::out);
 
     if (!target.is_open()) {
         cout << "Error opening file!" << endl;
@@ -29,6 +33,15 @@ bool setByte(const string& filename, int addr, char val) {
     return true;
 }
 
+bool randomCorrupt(){
+    fstream target(file, std::ios::binary | std::ios::in | std::ios::out);
+    cout << "where the header of your file ends?" << endl;
+    cin >> headerSize;
+   
+    int randomAddr = headerSize + ( std::rand() % ( target.tellg() - headerSize + 1 ) );
+    setByte(target,randomAddr,rand());
+}
+
 int main(){
     srand(static_cast<unsigned>(time(nullptr))); // Seed the random number generator
     cout << "chose your option (read the README.md first)" << endl;
@@ -41,9 +54,7 @@ int main(){
     cin >> file;
 
     if(option=="1"){
-        cout << "where the header of your file ends?" << endl;
-        cin >> headerSize;
-        setByte();
+        randomCorrupt();
     }
 }
 
