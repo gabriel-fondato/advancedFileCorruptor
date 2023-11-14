@@ -15,6 +15,9 @@ string doUserWantToContinue;
 int randomAddr;
 fstream target;
 fstream clone;
+int clones;
+int i = 0;
+string cloneFileName;
 
 bool setByte(fstream &target, int addr, char val) {
     // Open the file in binary mode
@@ -57,8 +60,25 @@ bool randomCloneCorrupt(){
     target.open(file, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
     cout << "where the header of your file ends?" << endl;
     cin >> headerSize;
-    randomAddr = getRandomAddr(target,headerSize)
-    cout << "how many files do you want to create a clone";
+    randomAddr = getRandomAddr(target,headerSize);
+    cout << "how many files do you want to create?" << endl;
+    cin >> clones;
+    while (clones > 0){
+        cloneFileName = file;
+        if(i>0){
+            cloneFileName = file + to_string(i);
+        }
+        cout << cloneFileName << endl;
+
+        target.open(cloneFileName, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
+        clone.open(cloneFileName, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
+        clone << target.rdbuf();
+        setByte(clone,randomAddr,rand());
+
+
+        ++i;
+        --clones;
+    }
 }
 
 int main(){
