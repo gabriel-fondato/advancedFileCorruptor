@@ -18,6 +18,8 @@ fstream clone;
 int clones;
 int i = 0;
 string cloneFileName;
+string fileExtention;
+int fileExtentionPosition;
 
 bool setByte(fstream &target, int addr, char val) {
     // Open the file in binary mode
@@ -63,22 +65,36 @@ bool randomCloneCorrupt(){
     randomAddr = getRandomAddr(target,headerSize);
     cout << "how many files do you want to create?" << endl;
     cin >> clones;
+
+    fileExtentionPosition = file.find(".");  //find where is the file extention
+    fileExtention = file.substr(fileExtentionPosition - 1); //get file extention
+    string originalFileName = file + fileExtention;
+    file = file.substr(0,file.length() - fileExtention.length());  //remove the file extention from the filename
+      
     while (clones > 0){
-        cloneFileName = file;
-        if(i>0){
-            cloneFileName = file + to_string(i);
-        }
+        
+        if(!i==0)
+            cloneFileName = file;
+            cloneFileName = cloneFileName + to_string(i);
+
         cout << cloneFileName << endl;
 
-        target.open(cloneFileName, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
-        clone.open(cloneFileName, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
+        target.open(file, ios::in | ios::binary);
+        clone.open(cloneFileName, ios::out | ios::binary);
         clone << target.rdbuf();
+        clone.close();
+        target.close();
+        clone.open(cloneFileName, std::ios::binary | std::ios::in | std::ios::out | ios::ate);
         setByte(clone,randomAddr,rand());
-
-
+        clone.close();
+        if(!i==0)
+            cloneFileName = cloneFileName.substr(0, cloneFileName.length() - 1);
         ++i;
         --clones;
+        cout << file + "" + fileExtention << endl;
+        rename(cloneFileName.c_str(),originalFileName.c_str());
     }
+
 }
 
 int main(){
